@@ -19,7 +19,6 @@ import android.widget.TextView;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.CollationElementIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -35,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     final Button b = new Button(getApplicationContext());
 
     //SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
-    //String date= sdf.format(new Date());
+    //String date= sdf.format(new Date());/
 
     List<Integer> inr = new ArrayList<>();
 
@@ -48,19 +47,20 @@ public class MainActivity extends AppCompatActivity {
 
     private LinearLayout linearLayout;
 
-
     @SuppressLint("ClickableViewAccessibility")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mTextField = (TextView) = findViewById(R.id.mTextField);
+        mTextField = (TextView) findViewById(R.id.mTextField);
         button = (Button) findViewById(R.id.button);
         linearLayout = (LinearLayout) findViewById(R.id.liner);
 
         fileName = Environment.getExternalStorageDirectory().getAbsolutePath();
 
         button.setOnTouchListener(new View.OnTouchListener() {
+
+            //event button
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
 
@@ -75,7 +75,8 @@ public class MainActivity extends AppCompatActivity {
                     } catch (IOException e) {
                       e.printStackTrace();
 
-                      new CountDownTimer(5000, 1000) {
+                        //timer
+                      /*new CountDownTimer(5000, 1000) {
 
                           public void onTick(long millisUntilFinished) {
 
@@ -85,16 +86,48 @@ public class MainActivity extends AppCompatActivity {
                           public void onFinish() {
                               mTextField.setText("done!");
                           }
-                      }.start();
+                      }.start();*/
 
                     }
+
+                    CountDownTimer waitTimer;
+                    waitTimer = new CountDownTimer(5000, 300) {
+
+                        public void onTick(long millisUntilFinished) {
+                            System.out.println("WHILE OK");
+                        }
+
+                        public void onFinish() {
+                            try{
+                                recorder.stop();
+                            }catch(RuntimeException stopException){
+
+                            }
+                            recorder.reset();
+                            recorder.release();
+                            b.setText("Play" + Integer.toString(countID));
+                            b.setLayoutParams(
+                                    new LinearLayout.LayoutParams(
+
+                                            LinearLayout.LayoutParams.MATCH_PARENT,
+                                            LinearLayout.LayoutParams.WRAP_CONTENT)
+                            );
+                            b.setId(countID);
+                            writer(Environment.getExternalStorageDirectory().getAbsolutePath()+"/str.txt", countID);
+                            linearLayout.addView(b);
+                            fileName = "";
+                            clickable();
+                            keys.put(audioID, countID);
+                            countID++;
+                        }
+                    }.start();
 
                 }else if(motionEvent.getAction() == MotionEvent.ACTION_UP){
 
                     try{
                         recorder.stop();
                     }catch(RuntimeException stopException){
-                        //handle cleanup here
+
                     }
                     recorder.reset();
                     recorder.release();
